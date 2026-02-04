@@ -1,0 +1,96 @@
+name: custom:software-inventory
+version: 0.0.24
+minDynatraceVersion: "1.285"
+author:
+  name: "Dynatrace"
+
+
+python:
+  runtime:
+    module: software_inventory
+    version:
+      min: "3.10"
+  activation:
+    local: {}
+
+# New from here...
+# Metrics definition
+metrics:
+  - key: software_inventory.programs.count
+    metadata:
+      displayName: Software Inventory Count
+      description: Total number of installed programs found
+      unit: Count
+    dimensions:
+      - key: host.name
+        displayName: Host Name
+  - key: software_inventory.programs.info
+    metadata:
+      displayName: Software Inventory Information
+      description: Information about installed programs
+      unit: Count
+    dimensions:
+      - key: host.name
+        displayName: Host Name
+      - key: program_name
+        displayName: Program Name
+      - key: program_version
+        displayName: Program Version
+      - key: program_publisher
+        displayName: Publisher
+      - key: install_location
+        displayName: Install Location
+      - key: install_date
+        displayName: Install Date
+
+# Topology definition
+topology:
+  types:
+    - name: custom:software-inventory:program
+      displayName: Software Inventory
+      enabled: true
+      rules:
+        - idPattern: software_inventory.program_{program_name}
+          instanceNamePattern: "{program_name}"
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(software_inventory:programs)
+          attributes:
+            - key: host.name
+              pattern: "{host.name}"
+            - key: program_name
+              pattern: "{program_name}"
+            - key: program_version
+              pattern: "{program_version}"
+            - key: program_publisher
+              pattern: "{program_publisher}"
+            - key: install_location
+              pattern: "{install_location}"
+            - key: install_date
+              pattern: "{install_date}"
+          requiredDimensions:
+            - key: program_name
+
+# Variables for configuration
+vars:
+
+  - id: collection_interval
+    displayName: Collection Interval
+    description: How often to collect installed programs data (in minutes)
+    type: text
+
+  - id: registry_path_32bit
+    displayName: 32-bit Registry Path
+    description: Registry path for 32-bit programs
+    type: text
+    
+  - id: registry_path_64bit
+    displayName: 64-bit Registry Path
+    description: Registry path for 64-bit programs
+    type: text
+
+  - id: exclude_windows_updates
+    displayName: Exclude Windows Updates
+    description: Exclude KB updates from the list
+    type: text
+
