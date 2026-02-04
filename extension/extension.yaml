@@ -1,8 +1,8 @@
 name: custom:software-inventory
 version: 0.0.24
-minDynatraceVersion: "1.285"
+minDynatraceVersion: 1.329.0
 author:
-  name: "Dynatrace"
+  name: "V+J"
 
 
 python:
