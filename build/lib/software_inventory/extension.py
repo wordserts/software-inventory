@@ -324,7 +324,7 @@ class SoftwareInventoryExtension(Extension):
         try:
             # Report total count
             self.report_metric(
-                key="programs.count",
+                key="software_inventory.programs.count",
                 value=len(programs),
                 dimensions={'host.name': self.hostname}
             )
@@ -341,7 +341,7 @@ class SoftwareInventoryExtension(Extension):
                 }
                 
                 self.report_metric(
-                    key="programs.info",
+                    key="software_inventory.programs.info",
                     value=1,
                     dimensions=dimensions
                 )
@@ -356,7 +356,7 @@ class SoftwareInventoryExtension(Extension):
         try:
             # Report total count
             self.report_metric(
-                key="programs.count",
+                key="software_inventory.programs.count",
                 value=len(programs),
                 dimensions={'host.name': self.hostname}
             )
@@ -373,7 +373,7 @@ class SoftwareInventoryExtension(Extension):
                 }
                 
                 self.report_metric(
-                    key=f"programs.info",
+                    key=f"software_inventory.programs.info",
                     value=1,
                     dimensions=dimensions
                 )

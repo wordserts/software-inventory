@@ -1,6 +1,6 @@
 name: custom:software-inventory
 version: 0.0.24
-minDynatraceVersion: 1.329.0
+minDynatraceVersion: "1.285"
 author:
   name: "V+J"
 
@@ -16,7 +16,7 @@ python:
 # New from here...
 # Metrics definition
 metrics:
-  - key: software_inventory.programs.count
+  - key: func:programs.count
     metadata:
       displayName: Software Inventory Count
       description: Total number of installed programs found
@@ -24,7 +24,7 @@ metrics:
     dimensions:
       - key: host.name
         displayName: Host Name
-  - key: software_inventory.programs.info
+  - key: func:programs.info
     metadata:
       displayName: Software Inventory Information
       description: Information about installed programs
@@ -54,7 +54,7 @@ topology:
           instanceNamePattern: "{program_name}"
           sources:
             - sourceType: Metrics
-              condition: $prefix(software_inventory:programs)
+              condition: $prefix(custom:software-inventory.programs)
           attributes:
             - key: host.name
               pattern: "{host.name}"
