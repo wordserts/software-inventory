@@ -4,8 +4,9 @@ A Dynatrace Extensions 2.0 (Python, OneAgent-hosted) extension that collects the
 
 **Current version:** 0.0.26
 
-<!-- TODO: add a screenshot of the Software Inventory dashboard here -->
-![Software Inventory dashboard](docs/images/software-inventory-dashboard.png)
+![Software Inventory - Fleet Overview dashboard](docs/images/fleet-overview.png)
+
+New to custom extensions? Start with [Develop your own Dynatrace extensions](https://docs.dynatrace.com/docs/ingest-from/extensions/develop-your-extensions).
 
 ## Overview
 
@@ -35,13 +36,11 @@ Each collection cycle reports:
 
 ### Dashboards
 
-**Fleet Overview** – hosts reporting, installed programs, unique products, recent installs, software by publisher (donut), most widely installed software and programs per host (bar charts), software with more than one version, recent installations and the full inventory. Filter by hostname (multi-select).
-
-<!-- TODO: screenshot -->
+**Fleet Overview** – hosts reporting, installed programs, unique products, recent installs, software by publisher (donut), most widely installed software and programs per host (bar charts), software with more than one version, recent installations and the full inventory. Filter by **Hostname** and **Publisher** (multi-select), or search for part of a program name with the **Software** box (screenshot above).
 
 **Host Detail** – a single host: summary tiles, software by publisher, most recent installations and the complete software list with install locations.
 
-<!-- TODO: screenshot -->
+![Host Detail dashboard](docs/images/host-detail.png)
 
 Both dashboards show the latest snapshot within the selected timeframe, so use a timeframe longer than your collection interval (the 2 hour default works for 30 minute collection).
 
