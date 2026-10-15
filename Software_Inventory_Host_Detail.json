@@ -1,0 +1,192 @@
+{
+  "name": "Software Inventory - Host Detail",
+  "type": "dashboard",
+  "content": {
+    "version": 21,
+    "variables": [
+      {
+        "version": 2,
+        "key": "Host",
+        "type": "query",
+        "visible": true,
+        "editable": true,
+        "input": "timeseries x = max(software_inventory.programs.info, scalar:true), by:{host.name}\n| fields host.name\n| sort host.name asc",
+        "multiple": false
+      }
+    ],
+    "tiles": {
+      "1": {
+        "type": "markdown",
+        "content": "## Software Inventory - Host Detail\nEverything installed on a single host. Pick a **Host** above. Choose a timeframe longer than your collection interval."
+      },
+      "2": {
+        "type": "data",
+        "title": "Programs installed",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| summarize programs = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "showIcon": false,
+          "label": {
+            "label": "",
+            "mode": "custom"
+          },
+          "sparkline": {
+            "isVisible": false
+          },
+          "dataMapping": {
+            "value": "programs"
+          }
+        },
+        "querySettings": {}
+      },
+      "3": {
+        "type": "data",
+        "title": "Unique publishers",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| summarize publishers = countDistinct(program_publisher)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "showIcon": false,
+          "label": {
+            "label": "",
+            "mode": "custom"
+          },
+          "sparkline": {
+            "isVisible": false
+          },
+          "dataMapping": {
+            "value": "publishers"
+          }
+        },
+        "querySettings": {}
+      },
+      "4": {
+        "type": "data",
+        "title": "Unique products",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| summarize products = countDistinct(program_name)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "showIcon": false,
+          "label": {
+            "label": "",
+            "mode": "custom"
+          },
+          "sparkline": {
+            "isVisible": false
+          },
+          "dataMapping": {
+            "value": "products"
+          }
+        },
+        "querySettings": {}
+      },
+      "5": {
+        "type": "data",
+        "title": "Installed in last 30 days",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| filter install_date >= formatTimestamp(now() - 30d, format:\"yyyy-MM-dd\")\n| summarize recent = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "showIcon": false,
+          "label": {
+            "label": "",
+            "mode": "custom"
+          },
+          "sparkline": {
+            "isVisible": false
+          },
+          "dataMapping": {
+            "value": "recent"
+          }
+        },
+        "querySettings": {}
+      },
+      "6": {
+        "type": "data",
+        "title": "Software by publisher (top 10)",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| summarize installs = count(), by:{publisher = if(program_publisher == \"\", \"Unknown\", else: program_publisher)}\n| sort installs desc\n| limit 10",
+        "visualization": "donutChart",
+        "visualizationSettings": {},
+        "querySettings": {}
+      },
+      "7": {
+        "type": "data",
+        "title": "Programs per publisher (top 15)",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| summarize installs = count(), by:{publisher = if(program_publisher == \"\", \"Unknown\", else: program_publisher)}\n| sort installs desc\n| limit 15",
+        "visualization": "categoricalBarChart",
+        "visualizationSettings": {},
+        "querySettings": {}
+      },
+      "8": {
+        "type": "data",
+        "title": "Most recent installations",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| filter program_name != \"\"\n| fields program_name, program_version, program_publisher, install_date\n| filter install_date != \"\"\n| sort install_date desc\n| limit 25",
+        "visualization": "table",
+        "visualizationSettings": {},
+        "querySettings": {}
+      },
+      "9": {
+        "type": "data",
+        "title": "Complete software list",
+        "query": "timeseries seen = max(software_inventory.programs.info, scalar:true), by:{host.name, program_name, program_version, program_publisher, install_date, install_location}\n| fieldsAdd p = splitString(install_date, \"/\")\n| fieldsAdd a = toString(p[0]), b = toString(p[1])\n| fieldsAdd mo = if(toLong(a) > 12, b, else: a), dy = if(toLong(a) > 12, a, else: b)\n| fieldsAdd install_date = if(arraySize(p) == 3, concat(p[2], \"-\", substring(concat(\"0\", mo), from: stringLength(mo) - 1), \"-\", substring(concat(\"0\", dy), from: stringLength(dy) - 1)), else: install_date)\n| fieldsRemove p, a, b, mo, dy\n| fieldsAdd program_publisher = if(isNull(program_publisher) or program_publisher == \"\", \"Unknown\", else: program_publisher), program_version = coalesce(program_version, \"-\"), install_location = coalesce(install_location, \"-\"), install_date = coalesce(install_date, \"-\")\n| filter host.name == $Host\n| fields program_name, program_version, program_publisher, install_date, install_location\n| sort program_name asc",
+        "visualization": "table",
+        "visualizationSettings": {},
+        "querySettings": {}
+      }
+    },
+    "layouts": {
+      "1": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "2": {
+        "x": 0,
+        "y": 2,
+        "w": 6,
+        "h": 3
+      },
+      "3": {
+        "x": 6,
+        "y": 2,
+        "w": 6,
+        "h": 3
+      },
+      "4": {
+        "x": 12,
+        "y": 2,
+        "w": 6,
+        "h": 3
+      },
+      "5": {
+        "x": 18,
+        "y": 2,
+        "w": 6,
+        "h": 3
+      },
+      "6": {
+        "x": 0,
+        "y": 5,
+        "w": 8,
+        "h": 8
+      },
+      "7": {
+        "x": 8,
+        "y": 5,
+        "w": 16,
+        "h": 8
+      },
+      "8": {
+        "x": 0,
+        "y": 13,
+        "w": 24,
+        "h": 8
+      },
+      "9": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 14
+      }
+    }
+  }
+}

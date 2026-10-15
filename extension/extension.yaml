@@ -1,5 +1,5 @@
 name: custom:software-inventory
-version: 0.0.24
+version: 0.0.26
 minDynatraceVersion: "1.285"
 author:
   name: "V+J"
@@ -16,32 +16,16 @@ python:
 # New from here...
 # Metrics definition
 metrics:
-  - key: func:programs.count
+  - key: programs.count
     metadata:
       displayName: Software Inventory Count
       description: Total number of installed programs found
       unit: Count
-    dimensions:
-      - key: host.name
-        displayName: Host Name
-  - key: func:programs.info
+  - key: programs.info
     metadata:
       displayName: Software Inventory Information
       description: Information about installed programs
       unit: Count
-    dimensions:
-      - key: host.name
-        displayName: Host Name
-      - key: program_name
-        displayName: Program Name
-      - key: program_version
-        displayName: Program Version
-      - key: program_publisher
-        displayName: Publisher
-      - key: install_location
-        displayName: Install Location
-      - key: install_date
-        displayName: Install Date
 
 # Topology definition
 topology:
@@ -54,9 +38,9 @@ topology:
           instanceNamePattern: "{program_name}"
           sources:
             - sourceType: Metrics
-              condition: $prefix(custom:software-inventory.programs)
+              condition: $prefix(programs)
           attributes:
-            - key: host.name
+            - key: host_name
               pattern: "{host.name}"
             - key: program_name
               pattern: "{program_name}"
@@ -76,21 +60,21 @@ vars:
 
   - id: collection_interval
     displayName: Collection Interval
-    description: How often to collect installed programs data (in minutes)
+    description: "How often to collect installed programs data, in minutes. Default: 60"
     type: text
 
   - id: registry_path_32bit
     displayName: 32-bit Registry Path
-    description: Registry path for 32-bit programs
+    description: 'Registry path for 32-bit programs. Default: SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
     type: text
     
   - id: registry_path_64bit
     displayName: 64-bit Registry Path
-    description: Registry path for 64-bit programs
+    description: 'Registry path for 64-bit programs. Default: SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
     type: text
 
   - id: exclude_windows_updates
     displayName: Exclude Windows Updates
-    description: Exclude KB updates from the list
+    description: "Exclude KB updates from the list (true/false). Default: true"
     type: text
 
